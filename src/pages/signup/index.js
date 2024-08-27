@@ -1,7 +1,20 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { setTokens } from '../../store/authSlice';
 
 const signup = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const accessToken = useSelector((state) => state.auth.accessToken);
+
+  useEffect(() => {
+    if (accessToken) {
+      router.push('/');
+    }
+  }, [accessToken, router]);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -49,6 +62,7 @@ const signup = () => {
       }
 
       const data = await response.json();
+      dispatch(setTokens({ accessToken: data.access, refreshToken: data.refresh }));
       setSuccessMessage('Registration successful!');
     } catch (error) {
       console.log(error)

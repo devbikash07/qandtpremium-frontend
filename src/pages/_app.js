@@ -1,14 +1,16 @@
 import Layout from "@/components/layouts/Layout";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@material-tailwind/react";
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from '../store';
 
 export default function App({ Component, pageProps }) {
   return (
-   
-      <Layout>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
         <Component {...pageProps} />
-      
-      </Layout>
-    
+      </PersistGate>
+    </Provider>
   );
 }
