@@ -10,6 +10,7 @@ const signup = () => {
   });
 
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,7 +23,7 @@ const signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      alert('Passwords do not madtch');
       return;
     }
 
@@ -40,13 +41,18 @@ const signup = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        if (response.status === 400) {
+          const errorData = await response.json();
+          setErrorMessage(errorData.error);
+          return;
+        }
       }
 
       const data = await response.json();
       setSuccessMessage('Registration successful!');
     } catch (error) {
-      console.error('Error:', error);
+      console.log(error)
+      setErrorMessage('An error occurred during registration');
     }
   };
 
@@ -136,6 +142,11 @@ const signup = () => {
             {successMessage && (
               <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                 {successMessage}
+              </div>
+            )}
+            {errorMessage && (
+              <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                {errorMessage}
               </div>
             )}
           </div>
